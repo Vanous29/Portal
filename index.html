@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+        }
+        #coinDisplay {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        #gameGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .game {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            text-align: center;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .game:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Welcome to the Gaming Portal!</h1>
+    <div id="coinDisplay">Coins: 100</div>
+</header>
+
+<section id="gameGrid">
+    <div class="game" onclick="playGame('Game 1')">Game 1</div>
+    <div class="game" onclick="playGame('Game 2')">Game 2</div>
+    <div class="game" onclick="playGame('Game 3')">Game 3</div>
+    <div class="game" onclick="playGame('Game 4')">Game 4</div>
+    <!-- Add more games as needed -->
+</section>
+
+<script>
+    let coins = 100; // Starting coins
+
+    function playGame(game) {
+        if (coins > 0) {
+            coins -= 10; // Example cost to play
+            document.getElementById('coinDisplay').innerHTML = 'Coins: ' + coins;
+            alert('Playing ' + game);
+        } else {
+            alert('Not enough coins to play!');
+        }
+    }
+</script>
+
+</body>
+</html>
