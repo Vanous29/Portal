@@ -807,34 +807,44 @@
     let gameInProgress = false;
     let selectedBet = null;
 
-    // Sound effects (using Web Audio API)
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // Sound effects (using Web Audio API) - lazy initialization for browser compatibility
+    let audioContext = null;
 
     function playSound(type) {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      if (type === 'win') {
-        oscillator.frequency.value = 800;
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
-      } else if (type === 'lose') {
-        oscillator.frequency.value = 200;
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.3);
-      } else if (type === 'click') {
-        oscillator.frequency.value = 600;
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.1);
+      try {
+        // Lazy initialize audioContext on first use (after user interaction)
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        if (type === 'win') {
+          oscillator.frequency.value = 800;
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+        } else if (type === 'lose') {
+          oscillator.frequency.value = 200;
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.3);
+        } else if (type === 'click') {
+          oscillator.frequency.value = 600;
+          gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.1);
+        }
+      } catch (error) {
+        // Silently fail if audio context cannot be created
+        console.log('Audio not available');
       }
     }
 
@@ -875,14 +885,14 @@
       document.getElementById('coinflip-winrate').textContent = coinflipWinRate + '%';
     }
 
-    function switchGame(game, clickEvent) {
+    function switchGame(game, event) {
       playSound('click');
       currentGame = game;
       
       // Update button states
       document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
-      if (clickEvent && clickEvent.target) {
-        clickEvent.target.classList.add('active');
+      if (event && event.target) {
+        event.target.classList.add('active');
       }
       
       // Hide all games
@@ -1090,7 +1100,7 @@
       black: [2, 4, 6, 8, 10, 11]
     };
 
-    function selectBet(bet, clickEvent) {
+    function selectBet(bet, event) {
       playSound('click');
       selectedBet = bet;
       
@@ -1098,8 +1108,8 @@
         spot.classList.remove('selected');
       });
       
-      if (clickEvent && clickEvent.target) {
-        clickEvent.target.classList.add('selected');
+      if (event && event.target) {
+        event.target.classList.add('selected');
       }
     }
 
