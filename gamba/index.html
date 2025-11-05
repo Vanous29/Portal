@@ -569,10 +569,10 @@
   </div>
 
   <div class="game-selector">
-    <button class="game-btn active" onclick="switchGame('blackjack')">♠️ Blackjack</button>
-    <button class="game-btn" onclick="switchGame('roulette')">🎡 Roulette</button>
-    <button class="game-btn" onclick="switchGame('slots')">🎰 Slots</button>
-    <button class="game-btn" onclick="switchGame('coinflip')">🪙 Coin Flip</button>
+    <button class="game-btn active" onclick="switchGame('blackjack', event)">♠️ Blackjack</button>
+    <button class="game-btn" onclick="switchGame('roulette', event)">🎡 Roulette</button>
+    <button class="game-btn" onclick="switchGame('slots', event)">🎰 Slots</button>
+    <button class="game-btn" onclick="switchGame('coinflip', event)">🪙 Coin Flip</button>
   </div>
 
   <!-- Blackjack Game -->
@@ -641,24 +641,24 @@
     <p style="text-align: center; color: #ffd700; margin: 15px 0;">Select your bet:</p>
     
     <div class="betting-board" id="roulette-board">
-      <div class="bet-spot green" data-bet="0" onclick="selectBet('0')">0</div>
-      <div class="bet-spot red" data-bet="1" onclick="selectBet('1')">1</div>
-      <div class="bet-spot black" data-bet="2" onclick="selectBet('2')">2</div>
-      <div class="bet-spot red" data-bet="3" onclick="selectBet('3')">3</div>
-      <div class="bet-spot black" data-bet="4" onclick="selectBet('4')">4</div>
-      <div class="bet-spot red" data-bet="5" onclick="selectBet('5')">5</div>
-      <div class="bet-spot black" data-bet="6" onclick="selectBet('6')">6</div>
-      <div class="bet-spot red" data-bet="7" onclick="selectBet('7')">7</div>
-      <div class="bet-spot black" data-bet="8" onclick="selectBet('8')">8</div>
-      <div class="bet-spot red" data-bet="9" onclick="selectBet('9')">9</div>
-      <div class="bet-spot black" data-bet="10" onclick="selectBet('10')">10</div>
-      <div class="bet-spot red" data-bet="11" onclick="selectBet('11')">11</div>
-      <div class="bet-spot red" onclick="selectBet('red')">RED (2x)</div>
-      <div class="bet-spot black" onclick="selectBet('black')">BLACK (2x)</div>
-      <div class="bet-spot" onclick="selectBet('even')">EVEN (2x)</div>
-      <div class="bet-spot" onclick="selectBet('odd')">ODD (2x)</div>
-      <div class="bet-spot" onclick="selectBet('1-6')">1-6 (2x)</div>
-      <div class="bet-spot" onclick="selectBet('7-12')">7-12 (2x)</div>
+      <div class="bet-spot green" data-bet="0" onclick="selectBet('0', event)">0</div>
+      <div class="bet-spot red" data-bet="1" onclick="selectBet('1', event)">1</div>
+      <div class="bet-spot black" data-bet="2" onclick="selectBet('2', event)">2</div>
+      <div class="bet-spot red" data-bet="3" onclick="selectBet('3', event)">3</div>
+      <div class="bet-spot black" data-bet="4" onclick="selectBet('4', event)">4</div>
+      <div class="bet-spot red" data-bet="5" onclick="selectBet('5', event)">5</div>
+      <div class="bet-spot black" data-bet="6" onclick="selectBet('6', event)">6</div>
+      <div class="bet-spot red" data-bet="7" onclick="selectBet('7', event)">7</div>
+      <div class="bet-spot black" data-bet="8" onclick="selectBet('8', event)">8</div>
+      <div class="bet-spot red" data-bet="9" onclick="selectBet('9', event)">9</div>
+      <div class="bet-spot black" data-bet="10" onclick="selectBet('10', event)">10</div>
+      <div class="bet-spot red" data-bet="11" onclick="selectBet('11', event)">11</div>
+      <div class="bet-spot red" onclick="selectBet('red', event)">RED (2x)</div>
+      <div class="bet-spot black" onclick="selectBet('black', event)">BLACK (2x)</div>
+      <div class="bet-spot" onclick="selectBet('even', event)">EVEN (2x)</div>
+      <div class="bet-spot" onclick="selectBet('odd', event)">ODD (2x)</div>
+      <div class="bet-spot" onclick="selectBet('1-6', event)">1-6 (2x)</div>
+      <div class="bet-spot" onclick="selectBet('7-12', event)">7-12 (2x)</div>
     </div>
 
     <div class="message" id="roulette-message"></div>
@@ -875,13 +875,15 @@
       document.getElementById('coinflip-winrate').textContent = coinflipWinRate + '%';
     }
 
-    function switchGame(game) {
+    function switchGame(game, clickEvent) {
       playSound('click');
       currentGame = game;
       
       // Update button states
       document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (clickEvent && clickEvent.target) {
+        clickEvent.target.classList.add('active');
+      }
       
       // Hide all games
       document.querySelectorAll('.game-container').forEach(container => {
@@ -1034,8 +1036,10 @@
       const dealerValue = calculateHandValue(dealerHand);
       
       // Dealer draws until 17 or higher
-      while (dealerValue < 17 && playerValue <= 21) {
+      let currentDealerValue = dealerValue;
+      while (currentDealerValue < 17 && playerValue <= 21) {
         dealerHand.push(deck.pop());
+        currentDealerValue = calculateHandValue(dealerHand);
         updateBlackjackDisplay(false);
       }
       
@@ -1086,7 +1090,7 @@
       black: [2, 4, 6, 8, 10, 11]
     };
 
-    function selectBet(bet) {
+    function selectBet(bet, clickEvent) {
       playSound('click');
       selectedBet = bet;
       
@@ -1094,7 +1098,9 @@
         spot.classList.remove('selected');
       });
       
-      event.target.classList.add('selected');
+      if (clickEvent && clickEvent.target) {
+        clickEvent.target.classList.add('selected');
+      }
     }
 
     function spinRoulette() {
